@@ -1,39 +1,39 @@
-import { JSONType } from "./types";
+import { JSONType } from '../src/types';
 
 export const mockData: JSONType = {
-  type: "object",
+  type: 'object',
   properties: {
     firstName: {
-      type: "string",
+      type: 'string',
       required: true,
     },
     obj: {
-      type: "object",
+      type: 'object',
       description: '1213',
       required: true,
       properties: {
         objname: {
-          type: "string",
+          type: 'string',
           required: true,
         },
         objlist: {
-          type: "array",
-          description: "Age in array",
+          type: 'array',
+          description: 'Age in array',
           item: {
-            type: "object",
+            type: 'object',
             properties: {
               objlistage: {
-                description: "Age in years",
-                type: "number",
+                description: 'Age in years',
+                type: 'number',
               },
             },
           },
         },
         stringlist: {
-          type: "array",
-          description: "Age in array",
+          type: 'array',
+          description: 'Age in array',
           item: {
-            type: "string",
+            type: 'string',
           },
         },
         hairColor: {
@@ -53,20 +53,20 @@ export const mockData: JSONType = {
       },
     },
     list: {
-      type: "array",
-      description: "Age in array",
+      type: 'array',
+      description: 'Age in array',
       item: {
-        type: "object",
+        type: 'object',
         properties: {
           age: {
-            description: "Age in years",
-            type: "number",
+            description: 'Age in years',
+            type: 'number',
           },
         },
       },
     },
     hairColor: {
-      type: "string",
+      type: 'string',
     },
   },
 };

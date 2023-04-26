@@ -1,5 +1,7 @@
 src/
+tests/
 rollup.config.js
 pnpm*
 tsconfig*.json
-.changeset
+commitlint.config.js
+.*

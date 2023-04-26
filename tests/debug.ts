@@ -1,9 +1,9 @@
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { mockData } from './mock';
-import { parse } from './index';
+import { parse } from '../src/index';
 
-const run = async() => {
+const run = async () => {
   const output = await parse(mockData, 'test', {
     abstractConfig: {
       abstractEnum: true,

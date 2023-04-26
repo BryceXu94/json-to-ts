@@ -18,7 +18,7 @@
     "build": "rollup --bundleConfigAsCjs -c rollup.config.js",
     "lint": "eslint './src/**/*.{js,ts}'",
     "lint:fix": "eslint --fix './src/**/*.{js,ts}'",
-    "publish": "pnpm run build && pnpm publish"
+    "publish": "pnpm run build && changeset publish"
   },
   "keywords": [
     "json-to-typescript",

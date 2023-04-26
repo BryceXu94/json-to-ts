@@ -74,6 +74,7 @@
     "./rollup.config.js",
     "./.eslintrc.js",
     "./commitlint.config.js",
+    "./lint-staged.config.js",
     "./tests/*"
   ],
 }

@@ -1,6 +1,6 @@
 {
   "name": "@bryce94/json-to-ts",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "将json转为ts声明",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -12,8 +12,11 @@
   },
   "type": "commonjs",
   "scripts": {
-    "dev": "ts-node ./src/debug.ts",
-    "build": "rollup --bundleConfigAsCjs -c rollup.config.js"
+    "dev": "ts-node ./tests/debug.ts",
+    "build": "rollup --bundleConfigAsCjs -c rollup.config.js",
+    "lint": "eslint './src/**/*.{js,ts}'",
+    "lint:fix": "eslint --fix './src/**/*.{js,ts}'",
+    "publish": "pnpm run build && pnpm publish"
   },
   "keywords": [
     "json-to-typescript",
@@ -24,10 +27,18 @@
   "license": "ISC",
   "devDependencies": {
     "@changesets/cli": "^2.26.1",
+    "@commitlint/cli": "^17.6.1",
+    "@commitlint/config-conventional": "^17.6.1",
     "@rollup/plugin-commonjs": "^24.1.0",
     "@rollup/plugin-node-resolve": "^15.0.2",
+    "@rushstack/eslint-patch": "^1.2.0",
     "@types/node": "^18.16.0",
     "@types/prettier": "^2.7.2",
+    "@typescript-eslint/parser": "^5.59.1",
+    "eslint": "^8.39.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "husky": "^8.0.3",
     "rollup": "^3.21.0",
     "rollup-plugin-delete": "^2.0.0",
     "rollup-plugin-terser": "^7.0.2",

@@ -67,7 +67,7 @@ interface ArrayType {
   alias?: string;
 }
 
-export type JSONType = exportObjectType;
+export type JSONType = BaseType|ObjectType|ArrayType|EnumType;
 export type ParsedJSONType = BaseType|ObjectType|ArrayType|EnumType;
 
 export type OptionsType = {

@@ -1,5 +1,11 @@
 # @bryce94/json-to-ts
 
+## 1.0.6
+
+### Patch Changes
+
+- fix:修复变量拆分逻辑错误
+
 ## 1.0.5
 
 ### Patch Changes

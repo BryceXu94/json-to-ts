@@ -33,14 +33,24 @@ class Parser {
       });
       if (
         curDepth === 1
-        || (curDepth <= maxDepth
-          && (abstractType.includes(type)
-            || (isArrayChild && abstractType.includes('array'))))
+        || curDepth <= maxDepth
       ) {
-        if (!jsonData.alias) {
-          jsonData.alias = `${path}`;
+        // 最顶层不受类型判断影响
+        if (
+          curDepth === 1
+          || (
+            (
+              isArrayChild && abstractType.includes('array')
+            ) || (
+              !isArrayChild && abstractType.includes('object')
+            )
+          )
+        ) {
+          if (!jsonData.alias) {
+            jsonData.alias = `${path}`;
+          }
+          this.abstractResult.push(jsonData);
         }
-        this.abstractResult.push(jsonData);
       }
     } else if (type === 'array' && jsonData.item) {
       jsonData.item.description = jsonData.description;

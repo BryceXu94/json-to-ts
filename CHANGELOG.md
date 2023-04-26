@@ -1,5 +1,11 @@
 # @bryce94/json-to-ts
 
+## 1.0.4
+
+### Patch Changes
+
+- 更新
+
 ## 1.0.3
 
 ### Patch Changes

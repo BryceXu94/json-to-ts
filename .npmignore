@@ -1,4 +1,5 @@
 src/
 rollup.config.js
 pnpm*
-tsconfig.json
+tsconfig*.json
+.changeset

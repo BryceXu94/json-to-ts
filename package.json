@@ -1,6 +1,6 @@
 {
   "name": "@bryce94/json-to-ts",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "将json转为ts声明",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -15,7 +15,11 @@
     "dev": "ts-node ./src/debug.ts",
     "build": "rollup --bundleConfigAsCjs -c rollup.config.js"
   },
-  "keywords": ["json-to-typescript", "json-to-ts", "将json转为ts声明"],
+  "keywords": [
+    "json-to-typescript",
+    "json-to-ts",
+    "将json转为ts声明"
+  ],
   "author": "bryce94",
   "license": "ISC",
   "devDependencies": {

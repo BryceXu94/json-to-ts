@@ -1,27 +1,27 @@
 {
   "name": "@bryce94/json-to-ts",
-  "version": "1.0.0",
-  "description": "将json-schema转为ts声明",
+  "version": "1.0.1",
+  "description": "将json转为ts声明",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "packageManager": "pnpm@7.0.0",
+  "homepage": "https://github.com/BryceXu94/json-to-ts",
   "publishConfig": {
     "access": "public"
   },
   "type": "commonjs",
   "scripts": {
     "dev": "ts-node ./src/debug.ts",
-    "build": "rollup --bundleConfigAsCjs -c rollup.config.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rollup --bundleConfigAsCjs -c rollup.config.js"
   },
-  "keywords": [],
+  "keywords": ["json-to-typescript", "json-to-ts", "将json转为ts声明"],
   "author": "bryce94",
   "license": "ISC",
   "devDependencies": {
     "@changesets/cli": "^2.26.1",
     "@rollup/plugin-commonjs": "^24.1.0",
     "@rollup/plugin-node-resolve": "^15.0.2",
-    "@types/json-schema": "^7.0.11",
     "@types/node": "^18.16.0",
     "@types/prettier": "^2.7.2",
     "rollup": "^3.21.0",
@@ -33,8 +33,6 @@
   },
   "dependencies": {
     "change-case": "^4.1.2",
-    "json-schema": "^0.4.0",
-    "prettier": "^2.8.8",
-    "vtils": "^4.71.0"
+    "prettier": "^2.8.8"
   }
 }

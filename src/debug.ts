@@ -6,7 +6,7 @@ import { parse } from './index';
 const run = async() => {
   const output = await parse(mockData, 'test', {
     abstractConfig: {
-      abstractEnum: false,
+      abstractEnum: true,
       abstractType: ['array', 'object'],
     },
   });

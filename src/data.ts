@@ -7,6 +7,13 @@ export interface testObjObjlistItem {
    */
   objlistage?: number;
 }
+export enum HAIR_COLOR_ENUM {
+  /**
+   * 红色
+   */
+  red = 1,
+  blue = 2,
+}
 /**
  * 1213
  */
@@ -20,7 +27,7 @@ export interface testObj {
    * Age in array
    */
   stringlist?: string[];
-  hairColor?: "1" | "2";
+  hairColor?: HAIR_COLOR_ENUM;
 }
 /**
  * Age in array

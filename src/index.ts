@@ -1,14 +1,14 @@
 import { camelCase, constantCase } from 'change-case';
 import prettier from 'prettier/standalone';
 import { Options } from 'prettier';
-import { JSONType, ParsedJSONType } from './types';
+import type { JSONType, ParsedJSONType, IAbstractConfig, OptionsType } from './types';
 import parserTypeScript from "prettier/parser-typescript";
-export { JSONType } from './types' 
+export type { JSONType, IAbstractConfig, OptionsType, EnumItem } from './types' 
 
 const abstractResult:ParsedJSONType[] = [];
 /** 遍历数据 并且处理是否拆分 */
-const transformJsonSchema = (
-  jsonSchema: ParsedJSONType,
+const transformJson = (
+  jsonData: ParsedJSONType,
   curDepth:number,
   maxDepth: number,
   path: string,
@@ -17,13 +17,13 @@ const transformJsonSchema = (
   abstractEnum: boolean,
   isArrayChild?: boolean
 ) => {
-  const type = jsonSchema?.type;
+  const type = jsonData?.type;
   if (type === 'object') {
-    Object.keys(jsonSchema.properties || {}).forEach((typeKey) => {
-      const curSchema = jsonSchema.properties![typeKey];
-      if (curSchema) {
+    Object.keys(jsonData.properties || {}).forEach((typeKey) => {
+      const curJson = jsonData.properties![typeKey];
+      if (curJson) {
         const _typeKey = camelCase(`${path}/${typeKey}`);
-        transformJsonSchema(curSchema, curDepth + 1, maxDepth, _typeKey, typeKey, abstractType, abstractEnum);
+        transformJson(curJson, curDepth + 1, maxDepth, _typeKey, typeKey, abstractType, abstractEnum);
       }
     })
     if (
@@ -39,28 +39,28 @@ const transformJsonSchema = (
         )
       )
     ) {
-      if (!jsonSchema.alias) {
-        jsonSchema.alias = `${path}`;
+      if (!jsonData.alias) {
+        jsonData.alias = `${path}`;
       }
-      abstractResult.push(jsonSchema);
+      abstractResult.push(jsonData);
     }
-  } else if (type === 'array' && jsonSchema.item) {
-    jsonSchema.item.description = jsonSchema.description;
-    jsonSchema.item.required = jsonSchema.required;
-    if (jsonSchema.item.type === 'array' || jsonSchema.item.type === 'object') {
+  } else if (type === 'array' && jsonData.item) {
+    jsonData.item.description = jsonData.description;
+    jsonData.item.required = jsonData.required;
+    if (jsonData.item.type === 'array' || jsonData.item.type === 'object') {
       if (
         curDepth === 1 ||
         (curDepth <= maxDepth && abstractType.includes(type))
       ) {
-        jsonSchema.alias = `${path}Item[]`;
-        jsonSchema.item.alias = `${path}Item`;
+        jsonData.alias = `${path}Item[]`;
+        jsonData.item.alias = `${path}Item`;
       }
     }
-    transformJsonSchema(jsonSchema.item, curDepth, maxDepth, path ,curKey, abstractType, abstractEnum, true);
+    transformJson(jsonData.item, curDepth, maxDepth, path ,curKey, abstractType, abstractEnum, true);
   } else if (type === 'enum') {
-    if (!jsonSchema.enum.some(v => typeof v.key === 'undefined' || v.key === null) && abstractEnum) {
-      jsonSchema.alias = constantCase(`${curKey}/Enum`);
-      abstractResult.push(jsonSchema);
+    if (!jsonData.enum.some(v => typeof v.key === 'undefined' || v.key === null) && abstractEnum) {
+      jsonData.alias = constantCase(`${curKey}/Enum`);
+      abstractResult.push(jsonData);
     }
   }
 };
@@ -69,22 +69,15 @@ const transformJsonSchema = (
  * types 拆分
  */
 const abstractDataType = (
-  jsonSchema: ParsedJSONType,
+  jsonData: ParsedJSONType,
   typeName: string,
   /** 声明拆分配置 */
-  abstractConfig: {
-    /** 最大拆分深度 仅作用于object和array */
-    maxDepth: number;
-    /** 拆分类型 */
-    abstractType: Array<'object'|'array'>;
-    /** 是否拆分枚举值 */
-    abstractEnum: boolean;
-  }
+  abstractConfig: IAbstractConfig
 ) => {
   const { maxDepth, abstractEnum, abstractType } = abstractConfig;
   abstractResult.length = 0;
-  transformJsonSchema(
-    jsonSchema,
+  transformJson(
+    jsonData,
     1,
     maxDepth,
     typeName,
@@ -92,23 +85,23 @@ const abstractDataType = (
     abstractType,
     abstractEnum,
   );
-  return abstractResult.map(v => jsonSchemaToType(v, v.alias!)).join('\n');
+  return abstractResult.map(v => jsonToType(v, v.alias!)).join('\n');
 }
 
 let interfaceStr = '';
 /**
- * 根据 JSONSchema 对象生产 TypeScript 类型定义。
+ * 根据 JSON 对象生产 TypeScript 类型定义。
  *
- * @param jsonSchema JSONSchema 对象
+ * @param json JSON 对象
  * @param typeName 类型名称
  * @returns TypeScript 类型定义
  */
-const jsonSchemaToType = (jsonSchema: ParsedJSONType, typeName: string) => {
-  if (Object.keys(jsonSchema || {}).length === 0) {
+const jsonToType = (jsonData: ParsedJSONType, typeName: string) => {
+  if (Object.keys(jsonData || {}).length === 0) {
     return `export interface ${typeName} {}`;
   }
   interfaceStr = '';
-  const code = compileJsonSchema(jsonSchema, typeName, true);
+  const code = compileJson(jsonData, typeName, true);
   // return '';
   return code.trim();
 }
@@ -123,51 +116,51 @@ const getComment = (comment: string = '') => {
        */`
   }
 };
-const compileJsonSchema = (jsonSchema: ParsedJSONType, keyName: string, isTop = false) => {
-  if (jsonSchema.alias && !isTop) {
-    interfaceStr+= `${getComment(jsonSchema.description)}\n${keyName}${jsonSchema.required ? '' : '?'}: ${jsonSchema.alias}`;
+const compileJson = (jsonData: ParsedJSONType, keyName: string, isTop = false) => {
+  if (jsonData.alias && !isTop) {
+    interfaceStr+= `${getComment(jsonData.description)}\n${keyName}${jsonData.required ? '' : '?'}: ${jsonData.alias}`;
   } else {
     // array类型会在处理对应子类型时创建注释
-    if (jsonSchema.type !== 'array') {
-      interfaceStr += getComment(jsonSchema.description);
+    if (jsonData.type !== 'array') {
+      interfaceStr += getComment(jsonData.description);
     }
-    switch (jsonSchema.type) {
+    switch (jsonData.type) {
       case 'enum':
         if (isTop) {
           interfaceStr += `\nexport enum ${keyName} {
-            ${jsonSchema.enum
+            ${jsonData.enum
               .map(v => `${getComment(v.description)}\n${v.key} = ${v.value}`)
               .join(',')
             }
           }`;
         } else {
-          interfaceStr += `\n${keyName}${jsonSchema.required ? '' : '?'}: ${jsonSchema.enum.map(v => typeof v.value === 'number' ? v.value : `'${v.value}'`).join('|')}`;
+          interfaceStr += `\n${keyName}${jsonData.required ? '' : '?'}: ${jsonData.enum.map(v => typeof v.value === 'number' ? v.value : `'${v.value}'`).join('|')}`;
         }
         break;
       case 'object':
         if (isTop) {
           interfaceStr += `\nexport interface ${keyName} {`;
         } else {
-          interfaceStr += `\n${keyName}${jsonSchema.required ? '' : '?'}: {`;
+          interfaceStr += `\n${keyName}${jsonData.required ? '' : '?'}: {`;
         }
-        Object.entries(jsonSchema.properties!).forEach((v) => {
+        Object.entries(jsonData.properties!).forEach((v) => {
           const [key, val] = v;
-          compileJsonSchema(val, key);
+          compileJson(val, key);
         })
         interfaceStr+= `}`
         break;
       case 'array':
-        compileJsonSchema(jsonSchema.item!, keyName);
+        compileJson(jsonData.item!, keyName);
         interfaceStr+= `[]`
         break;
       case 'number':
-        interfaceStr+= `\n${keyName}${jsonSchema.required ? '' : '?'}: number`;
+        interfaceStr+= `\n${keyName}${jsonData.required ? '' : '?'}: number`;
         break;
       case 'boolean':
       case 'string':
       case 'null':
       case 'any':
-        interfaceStr+= `\n${keyName}${jsonSchema.required ? '' : '?'}: ${jsonSchema.type}`
+        interfaceStr+= `\n${keyName}${jsonData.required ? '' : '?'}: ${jsonData.type}`
         break;
     }
   }
@@ -191,19 +184,7 @@ export const parse = (
   data: JSONType,
   /** 类型声明名称 */
   keyName: string,
-  options: {
-    /** prettier配置 */
-    prettierOptions?: Options;
-    /** 声明拆分配置 */
-    abstractConfig?: {
-      /** 最大拆分深度 仅作用于object和array */
-      maxDepth?: number;
-      /** 拆分类型 */
-      abstractType?: Array<'object'|'array'>;
-      /** 是否拆分枚举值 */
-      abstractEnum?: boolean;
-    }
-  } = {}
+  options: OptionsType = {}
 ) => {
   const {
     prettierOptions = {},

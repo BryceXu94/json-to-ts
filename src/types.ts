@@ -1,3 +1,4 @@
+import { Options } from 'prettier';
 interface exportBaseType {
   description?: string;
   type: 'string'|'number'|'boolean'| 'null' | 'any';
@@ -35,16 +36,18 @@ interface BaseType {
   alias?: string;
 };
 
+export type EnumItem = {
+  key?: string;
+  value: string|number;
+  description?: string;
+}
+
 interface EnumType {
   description?: string;
   type: 'enum';
   required?: boolean;
   alias?: string;
-  enum: {
-    key?: string;
-    value: string|number;
-    description?: string;
-  }[];
+  enum: EnumItem[];
 };
 
 interface ObjectType {
@@ -66,3 +69,18 @@ interface ArrayType {
 
 export type JSONType = exportObjectType;
 export type ParsedJSONType = BaseType|ObjectType|ArrayType|EnumType;
+
+export type OptionsType = {
+  /** prettier配置 */
+  prettierOptions?: Options;
+  /** 声明拆分配置 */
+  abstractConfig?: Partial<IAbstractConfig>
+};
+export type IAbstractConfig = {
+  /** 最大拆分深度 仅作用于object和array */
+  maxDepth: number;
+  /** 拆分类型 */
+  abstractType: Array<'object'|'array'>;
+  /** 是否拆分枚举值 */
+  abstractEnum: boolean;
+}

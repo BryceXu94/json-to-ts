@@ -73,7 +73,9 @@ class Parser {
         && abstractEnum
       ) {
         jsonData.alias = constantCase(`${curKey}/Enum`);
-        this.abstractResult.push(jsonData);
+        if (!this.abstractResult.some(v => v.alias === jsonData.alias)) {
+          this.abstractResult.push(jsonData);
+        }
       }
     }
   };

@@ -1,5 +1,11 @@
 # @bryce94/json-to-ts
 
+## 1.0.7
+
+### Patch Changes
+
+- a84e14b: 修复相同枚举值重复生成问题
+
 ## 1.0.6
 
 ### Patch Changes
